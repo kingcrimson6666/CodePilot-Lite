@@ -1,0 +1,2 @@
+execution_model: local-stub-executor
+judge_model: local-stub-judge

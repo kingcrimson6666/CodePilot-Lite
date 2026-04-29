@@ -1,0 +1,9 @@
+allow_shell_tools: false
+enable_builtin_tools:
+  - list_dir
+  - read_file
+  - search_code
+  - write_file
+  - apply_patch
+  - run_tests
+  - git_diff

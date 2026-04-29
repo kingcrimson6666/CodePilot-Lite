@@ -1,0 +1,39 @@
+# Virtual environment
+.venv/
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+
+# Data directories
+data/
+*.sqlite
+
+# Configuration (contains sensitive info)
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Test cache
+.pytest_cache/
+.tox/
+.coverage
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test scripts (created during development)
+test_*.py
+check_*.py
+diagnose_*.py

@@ -1,0 +1,6 @@
+sandbox_root: .
+require_approval_for_high_risk: true
+blocked_patterns:
+  - "rm -rf"
+  - "mkfs"
+  - "shutdown"

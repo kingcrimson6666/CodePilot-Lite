@@ -1,0 +1,3 @@
+app_name: codepilot-lite
+max_steps: 6
+workspace_root: .

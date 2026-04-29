@@ -1,0 +1,6 @@
+hard_weights:
+  tests_passed: 0.5
+  constraints_ok: 0.5
+judge_weight: 0.3
+hard_weight: 0.7
+pass_threshold: 0.65

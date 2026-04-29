@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "codepilot-lite"
+version = "0.1.0"
+description = "Local codebase AI coding assistant MVP"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "typer>=0.12.3",
+  "pydantic>=2.8.0",
+  "pydantic-settings>=2.3.4",
+  "sqlalchemy>=2.0.31",
+  "structlog>=24.2.0",
+  "rich>=13.7.1",
+  "python-dotenv>=1.0.1",
+  "openai>=1.40.0",
+  "numpy>=1.26.0",
+  "prompt_toolkit>=3.0.47",
+  "rank-bm25>=0.2.2",
+  "sentence-transformers>=3.0.1",
+  "chromadb>=0.5.0",
+  "pytest>=8.2.0",
+]
+
+[project.scripts]
+codepilot = "src.app.cli:app"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+addopts = "-q"
