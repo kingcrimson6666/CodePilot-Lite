@@ -1,4 +1,4 @@
-"""Command loader for markdown-based prompts."""
+"""基于 Markdown 提示词的命令加载器"""
 
 from dataclasses import dataclass
 from pathlib import Path
@@ -21,7 +21,7 @@ class CommandSpec:
 
 
 def parse_command(text: str) -> Tuple[str, str]:
-    """Parse /command and argument string."""
+    """解析 /command 和参数字符串"""
     text = text.strip()
     if not text.startswith("/"):
         return "", ""
@@ -33,7 +33,7 @@ def parse_command(text: str) -> Tuple[str, str]:
 
 
 def load_commands(commands_dir: Path) -> Dict[str, CommandSpec]:
-    """Load command specs from markdown files."""
+    """从 Markdown 文件加载命令规范"""
     registry: Dict[str, CommandSpec] = {}
 
     for path in sorted(commands_dir.glob("*.md")):

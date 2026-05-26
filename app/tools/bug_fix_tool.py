@@ -1,4 +1,4 @@
-"""Bug fix tool (patch suggestion only)."""
+"""Bug 修复工具（仅补丁建议）"""
 
 from pathlib import Path
 from typing import Any, Dict, List
@@ -9,12 +9,12 @@ from hello_agents.tools.errors import ToolErrorCode
 
 
 class BugFixTool(Tool):
-    """Suggest a fix patch without applying it."""
+    """建议修复补丁但不应用"""
 
     def __init__(self, project_root: Path):
         super().__init__(
             name="BugFix",
-            description="Generate a patch suggestion for a target file.",
+            description="为目标文件生成补丁建议",
             expandable=False,
         )
         self.project_root = project_root.resolve()
@@ -24,25 +24,25 @@ class BugFixTool(Tool):
             ToolParameter(
                 name="target_file",
                 type="string",
-                description="Target file to patch",
+                description="要修补的目标文件",
                 required=True,
             ),
             ToolParameter(
                 name="context_snippet",
                 type="string",
-                description="Relevant snippet or diff context",
+                description="相关代码片段或差异上下文",
                 required=True,
             ),
             ToolParameter(
                 name="fix_instructions",
                 type="string",
-                description="Instructions for the fix",
+                description="修复说明",
                 required=True,
             ),
             ToolParameter(
                 name="apply",
                 type="boolean",
-                description="Whether to apply the fix (not supported yet)",
+                description="是否应用修复（暂不支持）",
                 required=False,
                 default=False,
             ),
@@ -56,24 +56,24 @@ class BugFixTool(Tool):
         if not target_file or not context_snippet or not fix_instructions:
             return ToolResponse.error(
                 code=ToolErrorCode.INVALID_PARAM,
-                message="target_file, context_snippet, and fix_instructions are required",
+                message="需要 target_file、context_snippet 和 fix_instructions 参数",
             )
 
         file_path = self._resolve_path(target_file)
         if not file_path.exists():
             return ToolResponse.error(
                 code=ToolErrorCode.NOT_FOUND,
-                message=f"Target file '{target_file}' does not exist",
+                message=f"目标文件 '{target_file}' 不存在",
             )
 
         diff = self._build_placeholder_diff(target_file, context_snippet, fix_instructions)
 
         return ToolResponse.success(
-            text="Patch suggestion generated",
+            text="已生成补丁建议",
             data={
                 "diff": diff,
                 "applied": False,
-                "notes": "Patch not applied. Review and apply manually.",
+                "notes": "补丁未应用。请查看并手动应用。",
             },
         )
 

@@ -199,10 +199,16 @@ class Agent(ABC):
             )
 
             # 触发完成事件
+            from datetime import datetime
+            duration_seconds = (datetime.now() - self._start_time).total_seconds()
+            
             await self._emit_event(
                 EventType.AGENT_FINISH,
                 on_finish,
-                result=result
+                result=result,
+                total_steps=self._session_metadata.get("total_steps", 0),
+                total_tokens=self._session_metadata.get("total_tokens", 0),
+                duration_seconds=duration_seconds
             )
 
             return result
@@ -251,10 +257,16 @@ class Agent(ABC):
             result = await self.arun(input_text, **kwargs)
 
             # 完成事件
+            from datetime import datetime
+            duration_seconds = (datetime.now() - self._start_time).total_seconds()
+            
             yield AgentEvent.create(
                 EventType.AGENT_FINISH,
                 self.name,
-                result=result
+                result=result,
+                total_steps=self._session_metadata.get("total_steps", 0),
+                total_tokens=self._session_metadata.get("total_tokens", 0),
+                duration_seconds=duration_seconds
             )
         except Exception as e:
             # 错误事件

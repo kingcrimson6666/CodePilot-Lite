@@ -1,4 +1,4 @@
-"""File summary tool."""
+"""文件摘要工具"""
 
 from pathlib import Path
 from typing import Any, Dict, List
@@ -9,12 +9,12 @@ from hello_agents.tools.errors import ToolErrorCode
 
 
 class FileSummaryTool(Tool):
-    """Summarize a single source file."""
+    """汇总单个源文件"""
 
     def __init__(self, project_root: Path):
         super().__init__(
             name="FileSummary",
-            description="Summarize a file with functions and classes listed.",
+            description="汇总文件，列出函数和类",
             expandable=False,
         )
         self.project_root = project_root.resolve()
@@ -24,13 +24,13 @@ class FileSummaryTool(Tool):
             ToolParameter(
                 name="path",
                 type="string",
-                description="File path to summarize (relative to project root)",
+                description="要汇总的文件路径（相对于项目根目录）",
                 required=True,
             ),
             ToolParameter(
                 name="max_lines",
                 type="integer",
-                description="Maximum number of lines to read",
+                description="要读取的最大行数",
                 required=False,
                 default=400,
             ),
@@ -41,7 +41,7 @@ class FileSummaryTool(Tool):
         if not path:
             return ToolResponse.error(
                 code=ToolErrorCode.INVALID_PARAM,
-                message="Missing required parameter: path",
+                message="缺少必需参数：path",
             )
 
         max_lines = int(parameters.get("max_lines", 400))
@@ -49,12 +49,12 @@ class FileSummaryTool(Tool):
         if not file_path.exists():
             return ToolResponse.error(
                 code=ToolErrorCode.NOT_FOUND,
-                message=f"File '{path}' does not exist",
+                message=f"文件 '{path}' 不存在",
             )
         if file_path.is_dir():
             return ToolResponse.error(
                 code=ToolErrorCode.IS_DIRECTORY,
-                message=f"Path '{path}' is a directory",
+                message=f"路径 '{path}' 是一个目录",
             )
 
         try:
@@ -62,7 +62,7 @@ class FileSummaryTool(Tool):
         except Exception as exc:
             return ToolResponse.error(
                 code=ToolErrorCode.EXECUTION_ERROR,
-                message=f"Failed to read file: {exc}",
+                message=f"读取文件失败：{exc}",
             )
 
         limited = lines[:max_lines]

@@ -1,18 +1,23 @@
-"""Safe write tool with confirmation flow."""
+"""带确认的安全文件写入工具"""
 
 from pathlib import Path
 from typing import Any, Dict, List
 import difflib
 import uuid
+import logging
 
 from hello_agents.tools import Tool, ToolParameter
 from hello_agents.tools.response import ToolResponse
 from hello_agents.tools.errors import ToolErrorCode
 from hello_agents.tools.builtin import WriteTool
 
+from app.tools.path_safety import is_safe_path, get_safe_path
+
+logger = logging.getLogger(__name__)
+
 
 class SafeWriteTool(Tool):
-    """Write files only after explicit confirmation."""
+    """Write files only after explicit confirmation with path safety checks."""
 
     def __init__(self, project_root: Path, registry=None):
         super().__init__(
@@ -78,6 +83,7 @@ class SafeWriteTool(Tool):
                     message="Invalid pending_id",
                 )
             pending = self._pending.pop(pending_id)
+            logger.info(f"执行确认写入: {pending['path']}")
             return self._writer.run(
                 {
                     "path": pending["path"],
@@ -92,6 +98,14 @@ class SafeWriteTool(Tool):
             return ToolResponse.error(
                 code=ToolErrorCode.INVALID_PARAM,
                 message="path and content are required",
+            )
+
+        # 检查路径安全性
+        if not is_safe_path(path, self.project_root):
+            logger.warning(f"拒绝访问不安全路径: {path}")
+            return ToolResponse.error(
+                code=ToolErrorCode.INVALID_PARAM,
+                message=f"路径 '{path}' 不在安全范围内",
             )
 
         diff = self._build_diff(path, content)
@@ -130,5 +144,5 @@ class SafeWriteTool(Tool):
     def _resolve_path(self, path: str) -> Path:
         candidate = Path(path)
         if candidate.is_absolute():
-            return candidate
+            return candidate.resolve()
         return (self.project_root / candidate).resolve()

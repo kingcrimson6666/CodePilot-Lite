@@ -1,4 +1,4 @@
-"""App settings and framework bootstrapping."""
+"""应用设置和框架引导"""
 
 from pathlib import Path
 import sys
@@ -15,7 +15,7 @@ STORAGE_DIR = REPO_ROOT / "storage"
 
 
 def init_environment() -> None:
-    """Prepare sys.path and load environment variables."""
+    """准备 sys.path 并加载环境变量"""
     sys.path.insert(0, str(FRAMEWORK_ROOT))
     STORAGE_DIR.mkdir(parents=True, exist_ok=True)
 

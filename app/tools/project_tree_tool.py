@@ -1,4 +1,4 @@
-"""Project tree tool."""
+"""项目目录树工具"""
 
 from pathlib import Path
 from typing import Any, Dict, List
@@ -9,12 +9,12 @@ from hello_agents.tools.errors import ToolErrorCode
 
 
 class ProjectTreeTool(Tool):
-    """Build a project tree with key files highlighted."""
+    """构建项目目录树，高亮关键文件"""
 
     def __init__(self, project_root: Path):
         super().__init__(
             name="ProjectTree",
-            description="Build a directory tree for the project with key files highlighted.",
+            description="构建项目目录树，高亮关键文件",
             expandable=False,
         )
         self.project_root = project_root.resolve()
@@ -24,20 +24,20 @@ class ProjectTreeTool(Tool):
             ToolParameter(
                 name="root_path",
                 type="string",
-                description="Root path to scan (relative to project root)",
+                description="要扫描的根路径（相对于项目根目录）",
                 required=True,
             ),
             ToolParameter(
                 name="max_depth",
                 type="integer",
-                description="Maximum depth to include",
+                description="包含的最大深度",
                 required=False,
                 default=4,
             ),
             ToolParameter(
                 name="ignore",
                 type="array",
-                description="Directory names to ignore",
+                description="要忽略的目录名称",
                 required=False,
                 default=[],
             ),
@@ -48,7 +48,7 @@ class ProjectTreeTool(Tool):
         if not root_path:
             return ToolResponse.error(
                 code=ToolErrorCode.INVALID_PARAM,
-                message="Missing required parameter: root_path",
+                message="缺少必需参数：root_path",
             )
 
         max_depth = int(parameters.get("max_depth", 4))
@@ -59,7 +59,7 @@ class ProjectTreeTool(Tool):
         if not root.exists():
             return ToolResponse.error(
                 code=ToolErrorCode.NOT_FOUND,
-                message=f"Root path '{root_path}' does not exist",
+                message=f"根路径 '{root_path}' 不存在",
             )
 
         tree_lines: List[str] = []
@@ -78,10 +78,10 @@ class ProjectTreeTool(Tool):
                 if self._is_key_file(path):
                     key_files.append(str(path.relative_to(self.project_root)))
 
-        tree_text = "\n".join(tree_lines) if tree_lines else "(empty)"
+        tree_text = "\n".join(tree_lines) if tree_lines else "(空)"
 
         return ToolResponse.success(
-            text=f"Project tree for {root_path} (depth <= {max_depth})",
+            text=f"{root_path} 的项目目录树（深度 <= {max_depth}）",
             data={
                 "tree": tree_text,
                 "key_files": sorted(set(key_files)),

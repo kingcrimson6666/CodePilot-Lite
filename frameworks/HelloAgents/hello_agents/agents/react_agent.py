@@ -943,6 +943,7 @@ class ReActAgent(Agent):
 
             current_step = 0
             final_answer = None
+            total_tokens = 0
 
             while current_step < self.max_steps:
                 current_step += 1
@@ -981,18 +982,30 @@ class ReActAgent(Agent):
 
                     tool_calls = response.tool_calls
 
+                    # 累计 token
+                    if response.usage:
+                        total_tokens += response.usage.get("total_tokens", 0)
+
                     if not tool_calls:
                         # 没有工具调用，直接返回
                         final_answer = response.content or full_response or "抱歉，我无法回答这个问题。"
+                        
+                        duration_seconds = (datetime.now() - session_start_time).total_seconds()
 
                         yield StreamEvent.create(
                             StreamEventType.AGENT_FINISH,
                             self.name,
                             result=final_answer,
-                            total_steps=current_step
+                            total_steps=current_step,
+                            total_tokens=total_tokens,
+                            duration_seconds=duration_seconds
                         )
 
-                        await self._emit_event(EventType.AGENT_FINISH, on_finish, result=final_answer)
+                        await self._emit_event(EventType.AGENT_FINISH, on_finish, 
+                                               result=final_answer,
+                                               total_steps=current_step,
+                                               total_tokens=total_tokens,
+                                               duration_seconds=duration_seconds)
 
                         # 保存到历史
                         self.add_message(Message(final_answer, "assistant"))
@@ -1048,14 +1061,22 @@ class ReActAgent(Agent):
                             except:
                                 final_answer = result_dict["content"]
 
+                            duration_seconds = (datetime.now() - session_start_time).total_seconds()
+
                             yield StreamEvent.create(
                                 StreamEventType.AGENT_FINISH,
                                 self.name,
                                 result=final_answer,
-                                total_steps=current_step
+                                total_steps=current_step,
+                                total_tokens=total_tokens,
+                                duration_seconds=duration_seconds
                             )
 
-                            await self._emit_event(EventType.AGENT_FINISH, on_finish, result=final_answer)
+                            await self._emit_event(EventType.AGENT_FINISH, on_finish, 
+                                                   result=final_answer,
+                                                   total_steps=current_step,
+                                                   total_tokens=total_tokens,
+                                                   duration_seconds=duration_seconds)
 
                             # 保存到历史
                             self.add_message(Message(final_answer, "assistant"))
@@ -1085,16 +1106,24 @@ class ReActAgent(Agent):
             # 达到最大步数
             if not final_answer:
                 final_answer = "抱歉，已达到最大步数限制，无法完成任务。"
+                
+                duration_seconds = (datetime.now() - session_start_time).total_seconds()
 
                 yield StreamEvent.create(
                     StreamEventType.AGENT_FINISH,
                     self.name,
                     result=final_answer,
                     total_steps=current_step,
-                    max_steps_reached=True
+                    total_tokens=total_tokens,
+                    max_steps_reached=True,
+                    duration_seconds=duration_seconds
                 )
 
-                await self._emit_event(EventType.AGENT_FINISH, on_finish, result=final_answer)
+                await self._emit_event(EventType.AGENT_FINISH, on_finish, 
+                                       result=final_answer,
+                                       total_steps=current_step,
+                                       total_tokens=total_tokens,
+                                       duration_seconds=duration_seconds)
 
                 # 保存到历史
                 self.add_message(Message(final_answer, "assistant"))

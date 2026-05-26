@@ -1,4 +1,4 @@
-"""Dependency tool for project dependencies."""
+"""项目依赖分析工具"""
 
 from pathlib import Path
 from typing import Any, Dict, List
@@ -10,12 +10,12 @@ from hello_agents.tools.errors import ToolErrorCode
 
 
 class DependencyTool(Tool):
-    """Summarize project dependencies from common manifests."""
+    """从常见清单文件汇总项目依赖"""
 
     def __init__(self, project_root: Path):
         super().__init__(
             name="Dependency",
-            description="Summarize project dependencies from manifests.",
+            description="从清单文件汇总项目依赖",
             expandable=False,
         )
         self.project_root = project_root.resolve()
@@ -25,13 +25,13 @@ class DependencyTool(Tool):
             ToolParameter(
                 name="root_path",
                 type="string",
-                description="Root path to scan (relative to project root)",
+                description="要扫描的根路径（相对于项目根目录）",
                 required=True,
             ),
             ToolParameter(
                 name="include_dev",
                 type="boolean",
-                description="Include development dependencies",
+                description="包含开发依赖",
                 required=False,
                 default=False,
             ),
@@ -42,7 +42,7 @@ class DependencyTool(Tool):
         if not root_path:
             return ToolResponse.error(
                 code=ToolErrorCode.INVALID_PARAM,
-                message="Missing required parameter: root_path",
+                message="缺少必需参数：root_path",
             )
 
         include_dev = bool(parameters.get("include_dev", False))
@@ -50,7 +50,7 @@ class DependencyTool(Tool):
         if not root.exists():
             return ToolResponse.error(
                 code=ToolErrorCode.NOT_FOUND,
-                message=f"Root path '{root_path}' does not exist",
+                message=f"根路径 '{root_path}' 不存在",
             )
 
         python_deps: List[str] = []
@@ -61,26 +61,26 @@ class DependencyTool(Tool):
         if requirements.exists():
             python_deps.extend(self._parse_requirements(requirements))
         else:
-            notes.append("requirements.txt not found")
+            notes.append("未找到 requirements.txt")
 
         pyproject = root / "pyproject.toml"
         if pyproject.exists():
             pyproject_deps = self._parse_pyproject(pyproject, include_dev)
             python_deps.extend(pyproject_deps)
         else:
-            notes.append("pyproject.toml not found")
+            notes.append("未找到 pyproject.toml")
 
         package_json = root / "package.json"
         if package_json.exists():
             node_deps.extend(self._parse_package_json(package_json, include_dev))
         else:
-            notes.append("package.json not found")
+            notes.append("未找到 package.json")
 
         python_deps = sorted(set(python_deps))
         node_deps = sorted(set(node_deps))
 
         return ToolResponse.success(
-            text="Dependency summary extracted",
+            text="依赖摘要已提取",
             data={
                 "python": python_deps,
                 "node": node_deps,

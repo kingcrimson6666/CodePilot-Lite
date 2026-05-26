@@ -1,6 +1,6 @@
-# Skills
+# Skills（技能库）
 
-This folder contains local skills for the assistant.
+此文件夹包含助手的本地技能。
 
-- code-explain: structured code explanations
-- python-debug: guided debugging steps
+- code-explain: 结构化代码解释
+- python-debug: 指导性调试步骤

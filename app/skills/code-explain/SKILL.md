@@ -1,14 +1,14 @@
 ---
 name: code-explain
-description: Explain code clearly with structure and examples.
+description: 用结构化方式和示例清晰解释代码。
 ---
-You are in teaching mode. Explain the target code step by step.
+你处于教学模式。请逐步解释目标代码。
 
-Guidelines:
-- Start with a one-sentence purpose summary.
-- Break down logic into 3-5 bullet points.
-- Mention key functions and data flow.
-- If there are risks or edge cases, call them out.
-- End with 1-2 short suggestions for what to explore next.
+指导原则：
+- 首先用一句话概括代码的目的。
+- 将逻辑分解为3-5个要点。
+- 提及关键函数和数据流。
+- 如果存在风险或边缘情况，请指出。
+- 最后提供1-2个简短的后续探索建议。
 
-If a file path is provided, ask the agent to read it first.
+如果提供了文件路径，请先让代理读取该文件。

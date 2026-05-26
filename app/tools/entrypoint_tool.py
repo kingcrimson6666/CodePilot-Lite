@@ -1,4 +1,4 @@
-"""Entrypoint detection tool."""
+"""入口点检测工具"""
 
 from pathlib import Path
 from typing import Any, Dict, List
@@ -9,12 +9,12 @@ from hello_agents.tools.errors import ToolErrorCode
 
 
 class EntryPointTool(Tool):
-    """Locate likely entrypoints in the repository."""
+    """定位仓库中可能的入口点"""
 
     def __init__(self, project_root: Path):
         super().__init__(
             name="EntryPoint",
-            description="Locate likely entrypoints such as CLI or main modules.",
+            description="定位可能的入口点，如 CLI 或主模块",
             expandable=False,
         )
         self.project_root = project_root.resolve()
@@ -24,7 +24,7 @@ class EntryPointTool(Tool):
             ToolParameter(
                 name="root_path",
                 type="string",
-                description="Root path to scan (relative to project root)",
+                description="要扫描的根路径（相对于项目根目录）",
                 required=True,
             )
         ]
@@ -34,14 +34,14 @@ class EntryPointTool(Tool):
         if not root_path:
             return ToolResponse.error(
                 code=ToolErrorCode.INVALID_PARAM,
-                message="Missing required parameter: root_path",
+                message="缺少必需参数：root_path",
             )
 
         root = self._resolve_root(root_path)
         if not root.exists():
             return ToolResponse.error(
                 code=ToolErrorCode.NOT_FOUND,
-                message=f"Root path '{root_path}' does not exist",
+                message=f"根路径 '{root_path}' 不存在",
             )
 
         entrypoints: List[str] = []
@@ -69,7 +69,7 @@ class EntryPointTool(Tool):
         entrypoints = sorted(set(entrypoints))
 
         return ToolResponse.success(
-            text="Entrypoint scan complete",
+            text="入口点扫描完成",
             data={
                 "entrypoints": entrypoints,
                 "reasoning": "; ".join(reasoning),
